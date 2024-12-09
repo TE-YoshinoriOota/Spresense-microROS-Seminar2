@@ -137,11 +137,18 @@ void scan_timer_callback(rcl_timer_t * timer, int64_t last_call_time) {
   static const int scan_buf_size = 360;
   static float *data;
   static float scan_buf[scan_buf_size] = {0};
+  static float intensities[scan_buf_size] = {0};
   MP.Send(sndid, dummy, scan_core);
   MP.Recv(&sndid, &data, scan_core);
   memcpy(&scan_buf[0], &data[0], sizeof(float)*360);
   setup_scan_msgs(&scan);
+  scan.ranges.size = scan_buf_size;
+  scan.ranges.capacity = scan_buf_size;
   scan.ranges.data = &scan_buf[0];
+  scan.intensities.size = scan_buf_size;
+  scan.intensities.capacity = scan_buf_size;
+  scan.intensities.data = &intensities[0];
+
 
   RCSOFTCHECK(rcl_publish(&scan_publisher, &scan, NULL));
 }
@@ -169,12 +176,12 @@ void setup() {
   RCCHECK(rclc_publisher_init_default(&tf_publisher,  &node,
     ROSIDL_GET_MSG_TYPE_SUPPORT(geometry_msgs, msg, TransformStamped), "tf"));
 
-  const uint32_t odm_timer_timeout = 100;
-  RCCHECK(rclc_timer_init_default(&odm_timer, &support, RCL_MS_TO_NS(odm_timer_timeout), odm_timer_callback));
-  const uint32_t imu_timer_timeout = 100;
+  const uint32_t imu_timer_timeout = 30;
   RCCHECK(rclc_timer_init_default(&imu_timer, &support, RCL_MS_TO_NS(imu_timer_timeout), imu_timer_callback));
-  const uint32_t scan_timer_timeout = 100;
+  const uint32_t scan_timer_timeout = 150;
   RCCHECK(rclc_timer_init_default(&scan_timer, &support, RCL_MS_TO_NS(scan_timer_timeout), scan_timer_callback));
+  const uint32_t odm_timer_timeout = 30;
+  RCCHECK(rclc_timer_init_default(&odm_timer, &support, RCL_MS_TO_NS(odm_timer_timeout), odm_timer_callback));
 
   RCCHECK(rclc_executor_init(&executor, &support.context, 4, &rcl_allocator));
   RCCHECK(rclc_executor_add_subscription(&executor, &cmd_subscriber, &cmd_vel, &cmd_vel_callback, ON_NEW_DATA));

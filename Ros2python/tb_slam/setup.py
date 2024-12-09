@@ -1,6 +1,6 @@
 import os
-from setuptools import find_packages, setup
 from glob import glob
+from setuptools import find_packages, setup
 
 package_name = 'tb_slam'
 
@@ -14,7 +14,7 @@ setup(
         ('share/' + package_name, ['package.xml']),
         (os.path.join('share', package_name, 'launch'), glob('launch/*.py')),
         (os.path.join('share', package_name, 'config'), glob('config/*')),
-        (os.path.join('share', package_name, 'rviz'),   glob('rviz/*.rviz')),        
+        (os.path.join('share', package_name, 'rviz'), glob('rviz/*')),
     ],
     install_requires=['setuptools'],
     zip_safe=True,

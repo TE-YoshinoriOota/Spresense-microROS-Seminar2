@@ -3,7 +3,6 @@
 #include <sensor_msgs/msg/imu.h>
 #include <sensor_msgs/msg/laser_scan.h>
 
-
 void setup_odm_msgs(nav_msgs__msg__Odometry* odm) {
   // setup frame id
   static const int name_size = 5;

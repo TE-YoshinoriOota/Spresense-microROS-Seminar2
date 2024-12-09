@@ -13,7 +13,12 @@ from launch.substitutions import ThisLaunchFileDir
 def generate_launch_description():
     project_dir = get_package_share_directory('tb_slam')
     use_sim_time = LaunchConfiguration('use_sim_time', default='true')
+    enable_tf = LaunchConfiguration('enable_tf', default='false')
+    odom_tf = LaunchConfiguration('odom_tf', default='false')
 
+    #
+    # launch cartographer
+    #
     cartographer_config_dir = LaunchConfiguration('cartographer_config_dir',
                     default=os.path.join(project_dir, 'config'))
     configuration_basename = LaunchConfiguration('configuration_basename',
@@ -39,7 +44,10 @@ def generate_launch_description():
         arguments=['-resolution', resolution, '-publish_period_sec', publish_period_sec]
     )
 
-    rviz_config_dir = os.path.join(project_dir, 'rviz', 'cartographer2.rviz')
+    #
+    # display rivz2
+    #
+    rviz_config_dir = os.path.join(project_dir, 'rviz', 'cartographer.rviz')
     rviz2_node = Node(
         package='rviz2',
         executable='rviz2',
